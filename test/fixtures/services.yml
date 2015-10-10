@@ -1,0 +1,13 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  s_date: 2015-10-10 10:28:36
+  user_id: 1
+  provider_id: 1
+  s_status: MyString
+
+two:
+  s_date: 2015-10-10 10:28:36
+  user_id: 1
+  provider_id: 1
+  s_status: MyString
