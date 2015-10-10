@@ -12,6 +12,7 @@ class Api::V1::UsersController < ApplicationController
     end
   end
 
+
   def create
     if params[:name] && params[:user_t]
       @u = User.new
