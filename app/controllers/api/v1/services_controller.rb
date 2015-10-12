@@ -4,11 +4,27 @@ class Api::V1::ServicesController < ApplicationController
     if params[:name]
       if (@u = User.find_by name: params[:name]) != nil
         if(@u.user_t == 'user')
-          render json: @u.services_as_user
+          if params[:only] && params[:only] == 'sent'
+            render json: @u.services_as_user.where(s_status: 'sent')
+          elsif params[:only] && params[:only] == 'done' 
+            render json: @u.services_as_user.where(s_status: 'done')
+          else
+            render json: @u.services_as_user
+          end
         else
-          render json: @u.services_as_provider
+          if params[:only] && params[:only] == 'sent'
+            render json: @u.services_as_provider.where(s_status: 'sent')
+          elsif params[:only] && params[:only] == 'done' 
+            render json: @u.services_as_provider.where(s_status: 'done')
+          else
+            render json: @u.services_as_provider
+          end
         end
+      else
+        render json: {error: 'user not found'}, status: 404
       end
+    else
+      render json: {error: 'request incompleto'}, status: 400
     end
   end
 
