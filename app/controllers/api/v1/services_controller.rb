@@ -14,7 +14,11 @@ class Api::V1::ServicesController < ApplicationController
 
 
   def create
-       
+    if params[:name] && params[:provider] && (params[:location] == 'actual' || (params[:latitude] && params[:longitude])
+      
+    else
+      render json: {error: 'request incompleto'}, status: 400
+    end
   end
 
 end
