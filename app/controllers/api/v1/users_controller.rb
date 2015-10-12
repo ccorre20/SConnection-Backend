@@ -7,6 +7,16 @@ class Api::V1::UsersController < ApplicationController
       else
         render json: { error: "usuario inexistente"}, status: 404
       end
+    elsif params[:only]
+      if params[:only] == 'provider'
+        @ulist = User.where(user_t: 'provider')
+        render json: @ulist, status: 200
+      elsif params[:only] == 'user'
+        @ulist = User.where(user_t: 'user')
+        render json: @ulist, status: 200
+      else
+        render json: { error: "tipo incorrecto" }, status: 400
+      end
     else
       render json: { error: "request incompleto" }, status: 400
     end
