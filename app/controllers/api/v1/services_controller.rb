@@ -40,7 +40,14 @@ class Api::V1::ServicesController < ApplicationController
       @s.s_t = 'sent'
       @s.message = params[:message]
       if(@s.save)
-        render json: @s, status: 200
+        @ss = ServiceStatus.new
+        @ss.service = @s
+        @ss.status = 'false'
+        if @ss.save    
+          render json: @s, status: 200
+        else
+          render json: {error: 'error'}, status: 500
+        end
       else
         render json: {error: 'error'}, status: 500
       end
