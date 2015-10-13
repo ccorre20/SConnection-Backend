@@ -37,7 +37,7 @@ class Api::V1::ServicesController < ApplicationController
       @s.provider = User.find_by(name: params[:provider])
       @s.latitude = params[:latitude]
       @s.longitude = params[:longitude]
-      @s.s_statuts = 'sent'
+      @s.s_status = 'sent'
       @s.message = params[:message]
       @s.s_t = params[:type]
       if(@s.save)
