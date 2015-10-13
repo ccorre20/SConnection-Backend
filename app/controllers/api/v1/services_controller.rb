@@ -30,8 +30,20 @@ class Api::V1::ServicesController < ApplicationController
 
 
   def create
-    if params[:name] && params[:provider] && (params[:location] == 'actual' || (params[:latitude] && params[:longitude]))
-      
+    if params[:name] && params[:provider] && params[:latitude] && params[:longitude] && params[:message]
+      @s = Service.new
+      @s.s_date = Time.now()
+      @s.user = User.find_by(name: params[:name])
+      @s.provider = User.find_by(name: params[:provider])
+      @s.latitude = params[:latitude]
+      @s.longitude = params[:longitude]
+      @s.s_t = 'sent'
+      @s.message = params[:message]
+      if(@s.save)
+        render json: @s, status: 200
+      else
+        render json: {error: 'error'}, status: 500
+      end
     else
       render json: {error: 'request incompleto'}, status: 400
     end
