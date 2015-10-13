@@ -30,15 +30,16 @@ class Api::V1::ServicesController < ApplicationController
 
 
   def create
-    if params[:name] && params[:provider] && params[:latitude] && params[:longitude] && params[:message]
+    if params[:name] && params[:provider] && params[:latitude] && params[:longitude] && params[:message] && params[:type]
       @s = Service.new
       @s.s_date = Time.now()
       @s.user = User.find_by(name: params[:name])
       @s.provider = User.find_by(name: params[:provider])
       @s.latitude = params[:latitude]
       @s.longitude = params[:longitude]
-      @s.s_t = 'sent'
+      @s.s_statuts = 'sent'
       @s.message = params[:message]
+      @s.s_t = params[:type]
       if(@s.save)
         @ss = ServiceStatus.new
         @ss.service = @s
