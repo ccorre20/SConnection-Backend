@@ -29,6 +29,8 @@ class Api::V1::UsersController < ApplicationController
       @u.name = params[:name]
       if ['user', 'provider'].include?(params[:user_t])
         @u.user_t = params[:user_t]
+        @u.realname = params[:name]
+        @u.avail = 'true'
         if @u.save
           render json: @u, status: 200
         else
