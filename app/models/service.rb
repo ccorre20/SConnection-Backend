@@ -6,11 +6,28 @@ class Service < ActiveRecord::Base
   has_one :service_status
 
   def as_json(options={})
-    super(:only => [:id, :s_date, :s_status, :latitude, :longitude, :s_t, :message],
+    @u = :user
+    @l = Location.find_by(user: @u)
+    super(
+      :only => [:id, :s_date, :s_status, :latitude, :longitude, :s_t, :message],    
+      :include => {
+        :user => {
+          :only => [:name],
           :include => {
-            :user => {:only => [:name]},
-            :provider => {:only => [:name]}
+            :location => {
+              :only => [:latitude, :longitude]
+            }
           }
+        },
+        :provider => {
+          :only => [:name],
+          :include => {
+            :location => {
+              :only => [:latitude, :longitude]
+            }
+          }
+        }  
+      }
     )
   end
 end
