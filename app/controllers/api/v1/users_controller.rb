@@ -1,9 +1,13 @@
 class Api::V1::UsersController < ApplicationController
 
   def index
-    if params[:login] && params[:login] == 'true' && params[:name] 
+    if params[:login] && params[:login] == 'true' && params[:name] && params[:password]
       if (@u = User.find_by name: params[:name]) != nil
-        render json: @u , status: 200
+        if(@u.password = params[:password])
+          render json: @u , status: 200
+        else
+          render json: { error: "usuario inexistente"}, status: 404
+        end
       else
         render json: { error: "usuario inexistente"}, status: 404
       end
@@ -32,7 +36,25 @@ class Api::V1::UsersController < ApplicationController
         @u.realname = params[:name]
         @u.avail = 'true'
         if @u.save
-          render json: @u, status: 200
+          if @u.user_t = 'provider'
+            if params[:description] && params[:availability]
+              @p = ProviderProfile.new
+              @p.provider = @u
+              @p.description = params[:description]
+              @p.availability = params[:availability]
+              if @p.save
+                render json: @u, status: 200
+              else
+                @u.delete
+                render json: @u, status: 500
+              end
+            else
+              @u.delete
+              render json: @u, status: 500
+            end
+          else
+            render json: @u, status: 200
+          end
         else
           render json: @u.errors, status: 500
         end
@@ -45,3 +67,4 @@ class Api::V1::UsersController < ApplicationController
   end
 
 end
+
