@@ -16,6 +16,9 @@ class User < ActiveRecord::Base
       :include => {
         :location => {
           :only => [:latitude, :longitude]
+        },
+        :provider_profile_as_provider => {
+          :only => [:availability, :description]
         }
       }
     )

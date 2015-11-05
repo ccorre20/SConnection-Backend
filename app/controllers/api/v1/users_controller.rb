@@ -28,9 +28,10 @@ class Api::V1::UsersController < ApplicationController
 
 
   def create
-    if params[:name] && params[:user_t]
+    if params[:name] && params[:user_t] && params[:password]
       @u = User.new
       @u.name = params[:name]
+      @u.password = params[:password]
       if ['user', 'provider'].include?(params[:user_t])
         @u.user_t = params[:user_t]
         @u.realname = params[:name]
@@ -42,6 +43,7 @@ class Api::V1::UsersController < ApplicationController
               @p.provider = @u
               @p.description = params[:description]
               @p.availability = params[:availability]
+              @p.rating = 0.0f
               if @p.save
                 render json: @u, status: 200
               else
