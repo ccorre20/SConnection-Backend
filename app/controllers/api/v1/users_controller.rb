@@ -48,11 +48,11 @@ class Api::V1::UsersController < ApplicationController
                 render json: @u, status: 200
               else
                 @u.delete
-                render json: @u, status: 500
+                render json: @u, status: 501
               end
             else
               @u.delete
-              render json: @u, status: 500
+              render json: @u, status: 502
             end
           else
             render json: @u, status: 200
