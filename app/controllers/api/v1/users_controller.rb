@@ -43,7 +43,7 @@ class Api::V1::UsersController < ApplicationController
               @p.provider = @u
               @p.description = params[:description]
               @p.availability = params[:availability]
-              @p.rating = 0.0
+              @p.rating = 0.0f
               if @p.save
                 render json: @u, status: 200
               else
