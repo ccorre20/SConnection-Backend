@@ -37,7 +37,7 @@ class Api::V1::UsersController < ApplicationController
         @u.realname = params[:name]
         @u.avail = 'true'
         if @u.save
-          if @u.user_t = 'provider'
+          if @u.user_t == 'provider'
             if params[:description] && params[:availability]
               @p = ProviderProfile.new
               @p.provider = @u
