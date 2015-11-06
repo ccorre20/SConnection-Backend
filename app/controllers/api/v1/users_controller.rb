@@ -21,6 +21,12 @@ class Api::V1::UsersController < ApplicationController
       else
         render json: { error: "tipo incorrecto" }, status: 400
       end
+    elsif params[:name] && params[:ranking] == 'true'
+      if (@u = User.find_by name: params[:name]) != nil &&  (@u.user_t == 'provider') && @u.provider_profile_as_provider != nil
+        render json: @u.provider_profile_as_provider.ranking, status: 200
+      else
+        render json: @u, status: 500
+      end
     else
       render json: { error: "request incompleto" }, status: 400
     end
