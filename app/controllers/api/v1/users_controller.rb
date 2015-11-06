@@ -23,7 +23,7 @@ class Api::V1::UsersController < ApplicationController
       end
     elsif params[:name] && params[:ranking] == 'true'
       if (@u = User.find_by name: params[:name]) != nil &&  (@u.user_t == 'provider') && @u.provider_profile_as_provider != nil
-        render json: @u.provider_profile_as_provider.ranking, status: 200
+        render json: @u.provider_profile_as_provider.rating, status: 200
       else
         render json: @u, status: 500
       end
