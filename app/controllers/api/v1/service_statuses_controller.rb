@@ -5,31 +5,34 @@ class Api::V1::ServiceStatusesController < ApplicationController
 
 
   def create
-    if params[:name] && params[:status]
-      if (@u = User.find_by(name: params[:name])) != nil && (@s = @u.services_as_provider.take != nil)
-        if @s.service_status.take == nil
-          @ss = ServiceStatus.new
-          @ss.service = @s
-          @ss.status = params[:status]
-          if @ss.save
-            render json: @ss, status: 200
+    if params[:name] && params[:only]
+      if (@u = User.find_by(name: params[:name])) != nil && (@o = User.find_by(name: params[:only])) != nil 
+        if(@u.user_t == 'user') && (@s = Service.where(user: @u, provider: @p)).any?
+          if (@a = @s.take) != nil
+            @a.userok = true
+            if (@a.save)
+              render json: @a, status: 200
+            else
+              render json: @a, status: 500
+            end
           else
-            render json: {error: 'no se puede actualizar'}, status: 500 
+            render json: @a, status: 500
           end
         else
-          @ss = @s.service_status
-          @ss.status = params[:status]
-          if @ss.save
-            render json: @ss, status: 200
+          if (@s = Service.where(user: @p, provider: @u)).any? && (@a = @s.take) != nil
+            @a.providerok = true
+            if (@a.save)
+              render json: @a, status: 200
+            else
+              render json: @a, status: 500
+            end
           else
-             render json: {error: 'no se puede actualizar'}, status: 500 
+            render json: @a, status: 500
           end
         end
       else
-        render json: {error: 'error hallando servicio'}, status: 404
+        render json: @a, status: 500
       end
-    else
-      render json: {error: 'parametros incorrectos'}, status: 400
     end
   end
 

@@ -3,7 +3,7 @@ class Api::V1::ServicesController < ApplicationController
   def index
     if params[:name]
       if (@u = User.find_by name: params[:name]) != nil
-        if(@u.user_t == 'user')
+        if (@u.user_t == 'user')
           if params[:only] && params[:only] == 'sent'
             render json: @u.services_as_user.where(s_status: 'sent')
           elsif params[:only] && params[:only] == 'done' 
@@ -33,19 +33,26 @@ class Api::V1::ServicesController < ApplicationController
     if params[:name] && params[:provider] && params[:latitude] && params[:longitude] && params[:message] && params[:type]
       @s = Service.new
       @s.s_date = Time.now()
-      @s.user = User.find_by(name: params[:name])
-      @s.provider = User.find_by(name: params[:provider])
-      @s.latitude = params[:latitude]
-      @s.longitude = params[:longitude]
-      @s.s_status = 'sent'
-      @s.message = params[:message]
-      @s.s_t = params[:type]
-      if(@s.save)
-        @ss = ServiceStatus.new
-        @ss.service = @s
-        @ss.status = 'false'
-        if @ss.save    
-          render json: @s, status: 200
+      if (@u = User.find_by(name: params[:name])) != nil && (@p = User.find_by(name: params[:provider])) != nil
+        @s.user = @u
+        @s.provider = @p
+        @s.latitude = params[:latitude]
+        @s.longitude = params[:longitude]
+        @s.s_status = 'sent'
+        @s.message = params[:message]
+        @s.s_t = params[:type]
+        if (Service.where(user: @u, provider: @p).any? == false) && (@s.save)
+          @ss = ServiceStatus.new
+          @ss.service = @s
+          @ss.status = 'PENDING'
+          @ss.userok = false
+          @ss.providerok = false
+          if @ss.save    
+            render json: @s, status: 200
+          else
+            @s.delete
+            render json: {error: 'error'}, status: 500
+          end
         else
           render json: {error: 'error'}, status: 500
         end
