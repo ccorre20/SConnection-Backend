@@ -7,6 +7,8 @@ class User < ActiveRecord::Base
 
   has_one :location
 
+  has_one :provider_profile_as_provider, :class_name => 'ProviderProfile', :foreign_key => 'provider_id'
+
   def as_json(options={})
     @u = :user
     @l = Location.find_by(user: @u)
@@ -14,6 +16,9 @@ class User < ActiveRecord::Base
       :include => {
         :location => {
           :only => [:latitude, :longitude]
+        },
+        :provider_profile_as_provider => {
+          :only => [:availability, :description]
         }
       }
     )
