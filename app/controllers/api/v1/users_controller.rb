@@ -70,9 +70,14 @@ class Api::V1::UsersController < ApplicationController
         render json: { error: "tipo incorrecto" }, status: 400  
       end
     elsif params[:provider] && params[:rating]
-      if (@u = User.find_by(name: params[:provider]) != nil && params[:rating] <= 5.0 && params[:rating] >= 0.0
-       s = @u.provider_profile_as_provider.rating
-       @u.provider_profile_as_provider.rating = (s + params[:rating].to_f) / 2
+      if (@u = User.find_by(name: params[:provider])) != nil && params[:rating].to_f <= 5.0 && params[:rating].to_f >= 0.0
+        s = @u.provider_profile_as_provider.rating
+        @u.provider_profile_as_provider.rating = ((s + params[:rating].to_f) / 2)
+        if @u.provider_profile_as_provider.save
+          render json: @u.provider_profile_as_provider, status: 200
+        else
+          render json: @u.provider_profile_as_provider, status: 500
+        end
       else
         render json: @u, status: 502
       end
