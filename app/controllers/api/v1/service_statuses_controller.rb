@@ -7,16 +7,33 @@ class Api::V1::ServiceStatusesController < ApplicationController
   def create
     if params[:name] && params[:user]
       if (@u = User.find_by(name: params[:name])) != nil && (@o = User.find_by(name: params[:user])) != nil 
-        if(@u.user_t == 'user')
-          @s = Service.where(user: @u, provider: @p).take
-          @.service_status
+        if(@u.user_t == 'user') && (@s = Service.where(user: @u, provider: @p)).any?
+          if (@a = @s.take) != nil
+            @a.userok = true
+            if (@a.save)
+              render json: @a, status: 200
+            else
+              render json: @a, status: 500
+            end
+          else
+            render json: @a, status: 500
+          end
         else
-        
-        end    
+          if (@s = Service.where(user: @p, provider: @u)).any? && (@a = @s.take) != nil
+            @a.userok = true
+            if (@a.save)
+              render json: @a, status: 200
+            else
+              render json: @a, status: 500
+            end
+          else
+            render json: @a, status: 500
+          end
+        end
       else
-          
+        render json: @a, status: 500
       end
     end
-  
   end
+
 end
