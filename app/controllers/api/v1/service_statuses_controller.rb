@@ -5,17 +5,16 @@ class Api::V1::ServiceStatusesController < ApplicationController
 
 
   def create
-    if params[:name]
-      if params[:user]
-        if (@p = User.find_by(name: params[:name])) != nil && @p.user_t == 'provider' && (@u = User.find_by(name: params[:user])) != nil && @u.user_t == 'user'
-          
+    if params[:name] && params[:user]
+      if (@u = User.find_by(name: params[:name])) != nil && (@o = User.find_by(name: params[:user])) != nil 
+        if(@u.user_t == 'user')
+          @s = Service.where(user: @u, provider: @p).take
+          @.service_status
         else
-          
-        end
-      elsif params[:provider]
-      
+        
+        end    
       else
-      
+          
       end
     end
   

@@ -41,7 +41,7 @@ class Api::V1::ServicesController < ApplicationController
         @s.s_status = 'sent'
         @s.message = params[:message]
         @s.s_t = params[:type]
-        if (Service.where(user: @u, provider: @p).any? == false && (@s.save)
+        if (Service.where(user: @u, provider: @p).any? == false) && (@s.save)
           @ss = ServiceStatus.new
           @ss.service = @s
           @ss.status = 'PENDING'
