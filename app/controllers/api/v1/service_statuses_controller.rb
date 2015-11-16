@@ -3,16 +3,12 @@ class Api::V1::ServiceStatusesController < ApplicationController
   def index
     if params[:name] && (@u = User.find_by(name: params[:name])) != nil && @u.user_t == 'user'
       if @u.services_as_user.any? && (@s = @u.services_as_user.take.service_status) != nil
-        if @s.providerok
-          render json: @s, status: 200
-        else
-          render json: @s, status: 500
-        end
+          render json: @s.providerok, status: 200
       else
-        render json: @s, status: 500
+        render json: {error: 'no hay servicio o estado'}, status: 500
       end
     else
-      render json: @s, status: 500
+      render json: {error: 'usuario no encontrado o es proveedor'}, status: 500
     end
   end
 
