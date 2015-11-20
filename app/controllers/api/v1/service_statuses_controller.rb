@@ -5,8 +5,8 @@ class Api::V1::ServiceStatusesController < ApplicationController
       if @u.services_as_user.any? && (@s = @u.services_as_user.take.service_status) != nil
         @p = @u.services_as_user.take.provider
           render json: {providerok: @s.providerok, userok: @s.userok, 
-            user: {latitude: @u.location.latitude, longitude: @u.location.longitude}, 
-            provider: {latitude: @p.location.latitude, longitude: @p.location.longitude}}, status: 200
+            user: {name: @u.name,  latitude: @u.location.latitude, longitude: @u.location.longitude}, 
+            provider: {name: @p.name, latitude: @p.location.latitude, longitude: @p.location.longitude}}, status: 200
       else
         render json: {error: 'no hay servicio o estado'}, status: 500
       end
