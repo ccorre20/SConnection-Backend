@@ -21,31 +21,55 @@ class Api::V1::ServiceStatusesController < ApplicationController
       if (@u = User.find_by(name: params[:name])) != nil && (@o = User.find_by(name: params[:only])) != nil 
         if(@u.user_t == 'user') && (@s = Service.where(user: @u, provider: @p)).any?
           if (@a = @s.take) != nil
-            @a.userok = true
-            if (@a.save)
-              render json: @a, status: 200
+            @ss = @a.service_status
+            @ss.userok = true
+            if (@ss.save)
+              render json: @ss, status: 200
             else
-              render json: @a, status: 500
+              render json: @ss, status: 500
             end
           else
-            render json: @a, status: 500
+            render json: @ss, status: 500
           end
         else
           if (@s = Service.where(user: @p, provider: @u)).any? && (@a = @s.take) != nil
-            @a.providerok = true
-            if (@a.save)
-              render json: @a, status: 200
+            @ss = @a.service_status
+            @ss.providerok = true
+            if (haversine(@s.user.location.latitude, @s.user.location.longitude, @s.provider.location.latitude, @s.provider.location.longitude) < 500.0) &&  (@ss.save)
+              render json: @ss, status: 200
             else
-              render json: @a, status: 500
+              render json: {errors: "Lugar incorrecto o no tienes servicio"}, status: 503
             end
           else
-            render json: @a, status: 500
+            render json: @ss, status: 501
           end
         end
       else
-        render json: @a, status: 500
+        render json: @ss, status: 500
       end
     end
   end
 
+  def haversine(lat1, long1, lat2, long2)
+    dtor = Math::PI/180
+    r = 6378.14 * 1000
+
+    rlat1 = lat1 * dtor
+    rlong1 = long1 * dtor
+    rlat2 = lat2 * dtor
+    rlong2 = long2 * dtor
+
+    dlong = rlong1 - rlong2
+    dlat = rlat1 - rlat2
+
+    a = power(Math::sin(dlat/2), 2) + Math::cos(rlat1) * Math::cos(rlat2) * power(Math::sin(dlon/2), 2)
+    c = 2 * Math::atan2(Math::sqrt(a), Math::sqrt(1-a))
+    d = r * c
+
+    return d
+  end
+
+  def power(num, pow)
+    num ** pow
+  end
 end
