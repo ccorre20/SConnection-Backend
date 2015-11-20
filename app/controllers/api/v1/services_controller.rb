@@ -64,4 +64,26 @@ class Api::V1::ServicesController < ApplicationController
     end
   end
 
+  def destroy
+    if (@u = User.find_by(name: params[:name])) != nil
+      if (@us = @u.services_as_user.take) != nil
+        @uss = @us.service_status 
+        if @us.delete && @uss.delete
+          render json: @s, status: 200
+        else
+          render json: {errors: "can't remove service"}, status: 500
+        end
+      elsif (@ps = @u.services_as_provider.take) != nil
+        @pss = @ps.service_status 
+        if @ps.delete && @pss.delete
+          render json: @s, status: 200
+        else
+          render json: {errors: "can't remove service"}, status: 500
+        end
+      else
+          render json: {errors: "unable to find service"}, status: 500
+      end
+    end
+  end
+
 end

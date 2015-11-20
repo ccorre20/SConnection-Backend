@@ -6,6 +6,7 @@ Rails.application.routes.draw do
       
       get     "/services/",         to: "services#index"
       post    "/services/",         to: "services#create"
+      delete  "/services/",         to: "services#destroy"
 
       get     "/locations/",        to: "locations#index"
       post    "/locations/",        to: "locations#create"
